@@ -43,15 +43,15 @@
         */
         //Callbacks才是把控顺序执行链的主要对象
         var key = 'defer' + +(new Date),
-            CallBacks = function () {
-                if (!(this instanceof CallBacks))
-                    return new CallBacks();
-            };
+        CallBacks = function () {
+            if (!(this instanceof CallBacks))
+                return new CallBacks();
+            this.callbacks = [];
+            this.data = [];
+            this.waits = [];
+        };
         CallBacks.prototype.guid = 0;
-        CallBacks.prototype.callbacks = [];
-        CallBacks.prototype.data = [];
         CallBacks.prototype.lock = false;
-        CallBacks.prototype.waits = [];
         CallBacks.prototype.add = function (callback) {//添加一组回调函数
             this.callbacks.push(callback);
             callback[key] = this.guid++;//标识ID
@@ -91,25 +91,27 @@
             return this;
         };
 
+
         /*
     ================================================
                         Callbacks
     ================================================
 */
         var demo = CallBacks(),
-            i = 0, len = 30,
+            i = 0, len = 100,
             forEach = function (callback) {
                 i = 0;
                 for (; i < len; i++) {
                     callback(i);
                 }
-            };
-        delay = function (time, index) {
-            setTimeout(function () {
-                //console.info(index);
-                demo.done(index);
-            }, time);
-        }, test = [];
+            },
+            delay = function (time, index) {
+                setTimeout(function () {
+                    //console.info(index);
+                    demo.done(index);
+                }, time);
+            },
+            test = [];
         forEach(function (i) {
             demo.add(function () {
                 //console.log(i);
@@ -120,21 +122,20 @@
 
         /*=========================异步和乱序测试=======================*/
 
-        //forEach(function (i) {
-        //    test.push(i);
-        //})
-        //test.sort(function () {
-        //    return 0.5 - Math.random();
-        //});
-        //forEach(function (i) {
-        //    delay(Math.floor(0.5 - -(Math.random() * 1000)), test[i]);
-        //})
+        forEach(function (i) {
+            test.push(i);
+        })
+        test.sort(function () {
+            return 0.5 - Math.random();
+        });
+        forEach(function (i) {
+            delay(Math.floor(0.5 - -(Math.random() * 1000)), test[i]);
+        });
 
         /*=========================异步和乱序测试=======================*/
 
-
         /*=====================乱序测试==================*/
-        //console.log(demo);
+
         //demo.done(3);
         //demo.done(2);
         //demo.done(0);
