@@ -1,7 +1,7 @@
 # deferJsonp ![license|MIT][1]
 
 
-简单精致的web jsonp的异步流程控制库，查看和下载[**deferJsonp.2.0.js**][2]。
+简单精致的JSONP异步流程控制库，查看和下载[**deferJsonp.js**][2]。
 
 ## 异步控制
 过去的代码：
@@ -21,7 +21,7 @@
 现在：
 ```javascript
     var defer = new deferJsonp,
-        callback=function(data){ return data;};
+        callback = function (data) { return data; };
     defer.load('/test?callback=demo1',callback)
          .load('/test?callback=demo2',callback)
          .load('/test?callback=demo3', function (data3, data2, data) {
@@ -30,17 +30,15 @@
 ```
    
 
-> *和Promise并不相同，Promise强调等待上一个Promise对象的结果，而deferJsonp是在上一个deferJsonp请求的同时并行请求自己，在返回结果的时候按照顺序执行*。
-
 &nbsp;&nbsp;
 
 ----------
 
 &nbsp;&nbsp;
 
-最大化利用浏览器http线程并行，并维持每一个jsonp的执行顺序。
+最大化利用浏览器HTTP线程并行，并维持每一个JSONP的执行顺序。
 
- - 传统的jsonp进行三次请求，三次请求分别阻塞2000ms、3000ms和1000ms。完成所有请求共计约6000ms：
+ - 传统的JSONP进行三次请求，三次请求分别阻塞2000ms、3000ms和1000ms。完成所有请求共计约6000ms：
 
 ![jsonp][3]
   
@@ -54,9 +52,9 @@
 
 特性：
  - 根据url定义的条件自动管理jsonp回调函数
- - 抹平了jsonp的异步，脱离回调地狱
+ - 抹平了JSONP的异步，脱离回调地狱
  - 最大化浏览器并行请求，速度更快
- - 处理了jsonp失败
+ - 处理了JSONP的超时失败
  - 简单，精湛
   
 更多请参考[延伸][5]。
@@ -65,7 +63,7 @@
 
 ## API
 ### deferJsonp.prototype.load(url,done[,fail,time])
->发送一个jsonp请求(url)，设置成功后执行的函数(done)，失败后执行的函数(fail，可略)，超时时间(time，可略)，从load发起请求的回调函数，返回值会一直传递，如果没有返回值，则该次请求返回的默认值是`undefined`。
+>发送一个JSONP请求(url)，设置成功后执行的函数(done)，失败后执行的函数(fail，可略)，超时时间(time，可略)，从load发起请求的回调函数，返回值会一直传递，如果没有返回值，则该次请求返回的默认值是`undefined`。
 
 ```javascript
     var defer = new deferJsonp;
@@ -85,7 +83,7 @@
 
 
 ## 延伸
-在[DESCRIPTION][6]中详细描述了deferJsonp的工作模型、细节处理和高强度测试。
+在[这里][6]中详细描述了deferJsonp。
 
 ## 计划
 根据deferJsonp的需求量，后期**可能**提供这些API：
@@ -121,7 +119,7 @@
 
 
   [1]: https://camo.githubusercontent.com/11b46a2fb2858bbfcaf16cd73aa05f851230d0f5/687474703a2f2f696d672e736869656c64732e696f2f62616467652f6c6963656e73652d4d49542d79656c6c6f77677265656e2e737667
-  [2]: https://github.com/linkFly6/deferJsonp/blob/master/src/deferJsonp.2.0.js
+  [2]: https://github.com/linkFly6/deferJsonp/blob/master/src/deferJsonp.js
   [3]: https://github.com/linkFly6/deferJsonp/blob/master/external/jsonp.gif
   [4]: https://github.com/linkFly6/deferJsonp/blob/master/external/deferJsonp.gif
   [5]: #%E5%BB%B6%E4%BC%B8
