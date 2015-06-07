@@ -95,11 +95,11 @@
                 i = 0;//状态清零，永远从索引0开始
             }
         }
+		this.lock = false;//解锁
         //处理event loop，动态获取length
         if (this.waits.length) {
             this.done(this.waits.shift());//任务队列还有任务，继续执行
         }
-        this.lock = false;//解锁
         return this;
     };
 
