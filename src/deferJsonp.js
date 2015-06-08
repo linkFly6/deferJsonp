@@ -95,7 +95,7 @@
                 i = 0;//状态清零，永远从索引0开始
             }
         }
-		this.lock = false;//解锁
+        this.lock = false;//解锁
         //处理event loop，动态获取length
         if (this.waits.length) {
             this.done(this.waits.shift());//任务队列还有任务，继续执行
@@ -107,10 +107,9 @@
     var DeferJsonp = function (url, done, fail, time) {
         if (!(this instanceof DeferJsonp))
             return new DeferJsonp(url, done, fail, time);
+        this.Callbacks = new CallBacks;
         this.load(url, done, fail, time);
     };
-    DeferJsonp.prototype.Callbacks = new CallBacks;
-
     DeferJsonp.time = 10e3;//默认超时时间
 
     DeferJsonp.prototype.load = function (url, done, fail, time) {
