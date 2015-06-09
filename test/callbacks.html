@@ -22,18 +22,17 @@
                 !(length % 1) && //整数
                 (length - 1) in obj); //可以被索引
             },
-            map = function () {
-                var res = [];
-                each.call(arguments, function (arg) {
-                    if (isArray(arg))
-                        res = res.concat(arg);
-                    else if (isArrayLike(arg))
-                        each.call(arg, function (tmp) {
-                            res.push(tmp);
-                        });
-                    else
-                        res.push(arg);
-                });
+            merge = function (data, arg) {
+                var res = /*isArray(data) ? data :*/[data];
+                //if (arg && arg.length)
+                if (isArray(arg))
+                    res = res.concat(arg);
+                else if (isArrayLike(arg))
+                    each.call(arg, function (item) {
+                        res.push(item);
+                    });
+                else
+                    res.push(arg);
                 return res;
             }
         /*
@@ -44,12 +43,12 @@
         //Callbacks才是把控顺序执行链的主要对象
         var key = 'defer' + +(new Date),
         CallBacks = function () {
-            if (!(this instanceof CallBacks))
-                return new CallBacks();
-            this.callbacks = [];
-            this.data = [];
-            this.waits = [];
-        };
+        if (!(this instanceof CallBacks))
+            return new CallBacks();
+        this.callbacks = [];
+        this.data = [];
+        this.waits = [];
+    };
         CallBacks.prototype.guid = 0;
         CallBacks.prototype.lock = false;
         CallBacks.prototype.add = function (callback) {//添加一组回调函数
@@ -78,16 +77,16 @@
                     callback[key] = -1;//有任务尚未完成，等待
                     break;
                 } else if (!flag) {
-                    this.data = map(callback.apply(null, this.data), this.data);//可以运行当前函数
+                    this.data = merge(callback.apply(null, this.data), this.data);//可以运行当前函数
                     this.callbacks.shift();//重复运行
                     i = 0;//状态清零，永远从索引0开始
                 }
             }
+            this.lock = false;//解锁
             //处理event loop，动态获取length
             if (this.waits.length) {
                 this.done(this.waits.shift());//任务队列还有任务，继续执行
             }
-            this.lock = false;//解锁
             return this;
         };
 

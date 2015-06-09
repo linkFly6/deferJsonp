@@ -3,41 +3,20 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>DeferJsonp-2.0测试</title>
-    <!--<script src="_deferJsonp.1.0.js"></script>-->
-    <script src="deferJsonp.2.0.js"></script>
+    <script src="deferJsonp.js"></script>
 </head>
 <body>
     <script type="text/javascript">
         var defer = new deferJsonp,
-            url = '/Code/TestService.ashx?callback=?',
-            group = function (index, data) {
-                console.group(index);
-                console.dir(data);
-                console.groupEnd();
-            };
-        //defer.load(url + '&t=4000&data=one', function () {
-        //    group(0, arguments);
-        //    return arguments;
-        //}).load(url + '&t=0&data=two', function () {
-        //    group(1, arguments);
-        //}).load(url + '&t=2000&data=three', function () {
-        //    group(2, arguments);
-        //});
-        defer.load(url + '&t=2000&data=one', function (data) {
-            return data;
-        })
-        .load(url + '&t=3000&data=two', function (data) {
-            return data;
-        })
-        .load(url + '&t=1000&data=three', function (data) {
-            console.log(arguments);
-            return data;
-        })
-        //.load(url + '&t=800&data=three', function () {
-        //    group('result', arguments);
-        //});
+            url = 'TestService.ashx?callback=?';
 
-        //var defer = new deferJsonp;
+        deferJsonp().load(url + '&t=2000&data=one', function (data) {
+            return [data, '1'];//data===one
+        })
+        .load(url + '&t=3000&data=two')//return two
+        .load(url + '&t=1000&data=three', function (data) {
+            console.log(arguments);//=> ["three", "two", ["one", "1"]]
+        })
     </script>
 </body>
 </html>

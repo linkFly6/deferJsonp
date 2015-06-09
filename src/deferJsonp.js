@@ -38,18 +38,17 @@
             !(length % 1) && //整数
             (length - 1) in obj); //可以被索引
         },
-        map = function () {
-            var res = [];
-            each.call(arguments, function (arg) {
-                if (isArray(arg))
-                    res = res.concat(arg);
-                else if (isArrayLike(arg))
-                    each.call(arg, function (tmp) {
-                        res.push(tmp);
-                    });
-                else
-                    res.push(arg);
-            });
+        merge = function (data, arg) {
+            var res = /*isArray(data) ? data :*/[data];
+            //if (arg && arg.length)
+            if (isArray(arg))
+                res = res.concat(arg);
+            else if (isArrayLike(arg))
+                each.call(arg, function (item) {
+                    res.push(item);
+                });
+            else
+                res.push(arg);
             return res;
         };
 
@@ -90,7 +89,7 @@
                 callback[key] = -1;//有任务尚未完成，等待
                 break;
             } else if (!flag) {
-                this.data = map(callback.apply(null, this.data), this.data);//可以运行当前函数
+                this.data = merge(callback.apply(null, this.data), this.data);//可以运行当前函数
                 this.callbacks.shift();//重复运行
                 i = 0;//状态清零，永远从索引0开始
             }
@@ -110,18 +109,27 @@
         this.Callbacks = new CallBacks;
         this.load(url, done, fail, time);
     };
-    DeferJsonp.time = 10e3;//默认超时时间
+    DeferJsonp.time = 12e2;//默认超时时间
 
     DeferJsonp.prototype.load = function (url, done, fail, time) {
         var timeoutHandle, time, defer = this, id, _data, isDone = false;
-        if (url == null || typeof url !== 'string' || !isFunction(done)) return this;
-        if (fail > 0) {
+        if (url == null || typeof url !== 'string') return this;
+        if (done > 0) {
+            time = done;
+            done = null;
+        } else if (fail > 0) {
             time = fail;
             fail = null;
         }
         time = time || DeferJsonp.time;
         id = defer.Callbacks.add(function () {
-            return isDone ? done.apply(defer, map(_data, arguments)) : isFunction(fail) ? fail.apply(defer, map(_data, arguments)) : undefined;
+            var res;
+            if (isDone && isFunction(done)) {
+                res = done.apply(defer, merge(_data, arguments));
+            } else if (isFunction(fail))
+                res = fail.apply(defer, merge(_data, arguments));
+            //2015-06-09 修正：每个函数在没有返回值（undefined）的情况下自动追加服务器函数
+            return res === undefined ? _data : res;
         });
         writeJSONP(url, function (data) {
             isDone = true;

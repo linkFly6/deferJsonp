@@ -92,6 +92,18 @@
  2. deferJsonp.prototype.fail(callback,data) - 多次委托失败后执行的回调函数，并追加参数
  3. deferJsonp.prototype.ajax(options) - 支持ajax
  4. 兼容&lt;IE9的浏览器
+ 5. 提供没有依赖关系的API，纯JSONP加载，例如deferJsonp.prototype.send
+ 
+## 更新
+
+**2015-06-09**
+> 
+ - 重新调整委托函数的逻辑，当JSONP委托的回调函数没有返回值（undefined），则默认该函数返回服务器传递下来的源数据，如果有返回值，则覆盖源数据（override）。
+ - 支持deferJsonp.prototype.done(url&#91;,time&#93;) API。
+ - 修正了请求超时，但仍然触发done(成功后执行的回调函数)的bug。
+
+  
+  
  
 ## License
 
