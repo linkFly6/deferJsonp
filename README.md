@@ -22,9 +22,9 @@
 ```javascript
     var defer = new deferJsonp,
         callback = function (data) { return data; };
-    defer.load('/test?callback=demo1',callback)
-         .load('/test?callback=demo2',callback)
-         .load('/test?callback=demo3', function (data3, data2, data) {
+    defer.defer('/test?callback=demo1',callback)
+         .defer('/test?callback=demo2',callback)
+         .defer('/test?callback=demo3', function (data3, data2, data) {
 				console.log(data, data2, data3);
          });
 ```
@@ -62,24 +62,28 @@
   &nbsp;&nbsp;
 
 ## API
-### deferJsonp.prototype.load(url,done[,fail,time])
->发送一个JSONP请求(url)，设置成功后执行的函数(done)，失败后执行的函数(fail，可略)，超时时间(time，可略)，从load发起请求的回调函数，返回值会一直传递，如果没有返回值，则该次请求返回的默认值是`undefined`。
+### deferJsonp.prototype.defer(url,done[,fail,time])
+> 发送一个JSONP请求(url)，设置成功后执行的函数(done)，失败后执行的函数(fail，可略)，超时时间(time，可略)，从load发起请求的回调函数，返回值会一直传递，如果没有返回值，则该次请求返回的默认值是`undefined`。
 
 ```javascript
     var defer = new deferJsonp;
-    defer.load('/test?callback=demo1', function () {
+    defer.defer('/test?callback=demo1', function () {
         return true;//done
     }, function () {
         return false;//fail
     }, 1000)
-		.load('/test?callback=demo2', function (data) {
+		.defer('/test?callback=demo2', function (data) {
 			return 'linkFly';
 		})
-		.load('/test?callback=demo3', function (data3, data2, data) {
+		.defer('/test?callback=demo3', function (data3, data2, data) {
 			console.log(data, data2, data3);//[true,'linkFly','data3']
 		});
 ```
 
+&nbsp;
+
+### deferJsonp.prototype.getJSONP(url,done[,fail,time])
+> 发送一个传统的JSONP请求(url)，设置成功后执行的函数(done)，失败后执行的函数(fail，可略)，超时时间(time，可略)
 
 
 ## 延伸
@@ -92,10 +96,20 @@
  2. deferJsonp.prototype.fail(callback,data) - 多次委托失败后执行的回调函数，并追加参数
  3. deferJsonp.prototype.ajax(options) - 支持ajax
  4. 兼容&lt;IE9的浏览器
- 5. 提供没有依赖关系的API，纯JSONP加载，例如deferJsonp.prototype.send
+ 5. ~~提供没有依赖关系的API，纯JSONP加载，例如deferJsonp.prototype.send~~**（已完成）**
  
 ## 更新
 
+**2015-07-17**
+> 
+ - Callbacks对象重命名为Asyncqueue对象
+ - 现在默认并不处理超时异常，需要处理超时异常请传递`time`参数
+ - `deferJsonp.prototype.load`重命名为`deferJsonp.prototype.defer`
+ - 添加了API `deferJsonp.prototype.getJSONP`
+ - 强化内部Asyncqueue对象的工作能力
+ - 支持回调函数的多参
+ - 超时时间作为可选项
+ 
 **2015-06-09**
 > 
  - 重新调整委托函数的逻辑，当JSONP委托的回调函数没有返回值（undefined），则默认该函数返回服务器传递下来的源数据，如果有返回值，则覆盖源数据（override）。

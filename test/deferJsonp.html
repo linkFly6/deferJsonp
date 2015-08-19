@@ -2,21 +2,27 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>DeferJsonp-2.0测试</title>
-    <script src="deferJsonp.js"></script>
+    <title>DeferJsonp测试</title>
+    <script src="../src/deferJsonp.js"></script>
 </head>
 <body>
     <script type="text/javascript">
-        var defer = new deferJsonp,
-            url = 'TestService.ashx?callback=?';
+        var url = '/Home/Async?callback=?';
 
-        deferJsonp().load(url + '&t=2000&data=one', function (data) {
-            return [data, '1'];//data===one
+        deferJsonp().defer(url + '&time=2000&data=one', function (data) {
+            //return [data, '1'];//data===one
+            return data;
         })
-        .load(url + '&t=3000&data=two')//return two
-        .load(url + '&t=1000&data=three', function (data) {
-            console.log(arguments);//=> ["three", "two", ["one", "1"]]
+        .defer(url + '&time=3000&data=two')//return two
+        .defer(url + '&time=1000&data=three', function (data) {
+            //console.log(arguments);//=> ["three", "two", ["one", "1"]]
         })
+        .defer(url + '&time=3000&data=four', 1000)
+        .defer(url + '&time=1000&error=test')
+        .defer(url + '&time=2000&data=five', function (data) {
+            console.info(data);
+            console.log(arguments);
+        });
     </script>
 </body>
 </html>
