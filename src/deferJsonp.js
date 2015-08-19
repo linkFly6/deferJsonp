@@ -27,7 +27,7 @@
                 if (isLock) return;
                 isLock = true;
                 clearTimeout(timeoutHandle);
-                fail({ code: 0, msg: "请求失败" });
+                isFunction(fail) && fail({ code: 0, msg: "请求失败" });
             };
             node.src = url.replace(regCallbackName, '?$1=' + callbackName);
             domHead.appendChild(node);
@@ -36,7 +36,7 @@
                     if (isLock) return;
                     isLock = true;
                     clearTimeout(timeoutHandle);
-                    fail({ code: 1, msg: '请求超时' });
+                    isFunction(fail) && fail({ code: 1, msg: '请求超时' });
                 }, time);
             }
         },
